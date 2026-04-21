@@ -8,7 +8,8 @@ const manifest = getManifest();
 const { project, version, sprint, roadmap, stack } = manifest;
 
 // Load blog posts
-const posts = await Astro.glob('../content/blog/*.md');
+const postsFiles = import.meta.glob('../content/blog/*.md', { eager: true }) as Record<string, any>;
+const posts = Object.values(postsFiles);
 // Sort posts by date or just keep them as they are
 posts.sort((a, b) => new Date(a.frontmatter.pubDate).valueOf() - new Date(b.frontmatter.pubDate).valueOf());
 ---
