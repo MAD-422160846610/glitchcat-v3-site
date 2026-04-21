@@ -207,10 +207,6 @@ posts.sort((a, b) => new Date(a.frontmatter.pubDate).valueOf() - new Date(b.fron
 
 			// Glitch text effect
 			async function typeTextWithGlitch(element, finalHtml) {
-				// Temporary element to extract text nodes
-				const temp = document.createElement('div');
-				temp.innerHTML = finalHtml;
-				
 				// We'll just fade it in with a glitch effect on the container for simplicity and robustness with HTML tags
 				element.innerHTML = finalHtml;
 				element.style.opacity = '0';
@@ -238,6 +234,18 @@ posts.sort((a, b) => new Date(a.frontmatter.pubDate).valueOf() - new Date(b.fron
 				}, 50);
 			}
 
+			function hideModal() {
+				if (!modal.classList.contains('hidden')) {
+					modal.classList.add('hidden');
+					modal.classList.remove('flex');
+					document.body.style.overflow = '';
+					modalContent.innerHTML = '';
+					modalStatus.innerText = 'DECRYPTING...';
+					modalStatus.classList.add('text-blue-neon');
+					modalStatus.classList.remove('text-white');
+				}
+			}
+
 			document.querySelectorAll('.read-module-btn').forEach(btn => {
 				btn.addEventListener('click', (e) => {
 					// Open modal
@@ -254,14 +262,13 @@ posts.sort((a, b) => new Date(a.frontmatter.pubDate).valueOf() - new Date(b.fron
 				});
 			});
 
-			closeModal.addEventListener('click', () => {
-				modal.classList.add('hidden');
-				modal.classList.remove('flex');
-				document.body.style.overflow = '';
-				modalContent.innerHTML = '';
-				modalStatus.innerText = 'DECRYPTING...';
-				modalStatus.classList.add('text-blue-neon');
-				modalStatus.classList.remove('text-white');
+			closeModal.addEventListener('click', hideModal);
+
+			// Close on ESC key
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape') {
+					hideModal();
+				}
 			});
 		</script>
 	</body>
