@@ -167,8 +167,8 @@ posts.sort((a, b) => new Date(a.frontmatter.pubDate).valueOf() - new Date(b.fron
 								
 								<!-- Hidden Content -->
 								<div id={`post-content-${index}`} class="hidden">
-									<h2 class={`text-2xl font-black mb-6 text-${color}`}>{post.frontmatter.title}</h2>
-									<div class="prose prose-invert prose-p:text-white/80 prose-headings:text-white prose-li:text-white/80 max-w-none font-mono text-sm leading-relaxed" set:html={post.compiledContent()} />
+									<h2 class="text-2xl font-black mb-6 text-white uppercase tracking-widest border-b border-white/20 pb-4">{post.frontmatter.title}</h2>
+									<div class="font-mono text-sm leading-relaxed text-white/80" set:html={post.compiledContent()} />
 								</div>
 							</article>
 						)
