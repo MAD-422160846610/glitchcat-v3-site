@@ -1,0 +1,41 @@
+---
+---
+<canvas id="ascii-canvas" class="fixed top-0 left-0 w-full h-full -z-10 bg-black"></canvas>
+
+<script>
+  import { Particle, initParticles } from '../scripts/particle-engine.js';
+
+  const canvas = document.getElementById('ascii-canvas');
+  const ctx = canvas.getContext('2d');
+  
+  let particlesArray = [];
+  let mouse = {
+    x: null,
+    y: null,
+    radius: 150
+  };
+
+  window.addEventListener('mousemove', (event) => {
+    mouse.x = event.x;
+    mouse.y = event.y;
+  });
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < particlesArray.length; i++) {
+      particlesArray[i].draw();
+      particlesArray[i].update(mouse);
+    }
+    requestAnimationFrame(animate);
+  }
+
+  // Initialize
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particlesArray = initParticles(canvas);
+  });
+
+  particlesArray = initParticles(canvas);
+  animate();
+</script>

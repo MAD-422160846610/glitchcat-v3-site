@@ -1,0 +1,96 @@
+---
+import AsciiBackground from '../components/AsciiBackground.astro';
+import AsciiCat from '../components/AsciiCat.astro';
+import { getManifest } from '../utils/manifest-parser';
+
+const manifest = getManifest();
+const { project, version, sprint, roadmap, stack } = manifest;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{project} - {version}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+	</head>
+	<body class="bg-black text-white selection:bg-orange selection:text-white">
+		<AsciiBackground />
+
+		<main class="relative z-10 min-h-screen flex flex-col items-center justify-center p-8">
+			
+			<header class="text-center mb-16">
+				<div class="flex justify-center mb-6">
+					<AsciiCat />
+				</div>
+				<p class="font-mono text-xs tracking-widest text-blue-neon uppercase mb-4">
+					System initialized / {version} / {sprint}
+				</p>
+				<h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none">
+					{project.slice(0, 9)}<span class="text-orange">{project.slice(9)}</span>
+				</h1>
+			</header>
+
+			<section class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12">
+				
+				<div class="space-y-8">
+					<h2 class="font-mono text-sm tracking-widest text-orange uppercase border-b border-orange/30 pb-2">
+						Active Roadmap
+					</h2>
+					<ul class="space-y-4 font-mono text-sm">
+						{Object.values(roadmap)[0].map((task) => (
+							<li class="flex items-start gap-4">
+								<span class={task.status === 'done' ? 'text-blue-neon' : task.status === 'in-progress' ? 'text-orange animate-pulse' : 'text-white/40'}>
+									[{task.status === 'done' ? 'X' : task.status === 'in-progress' ? '>' : ' '}]
+								</span>
+								<span class="opacity-80">{task.task}</span>
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<div class="space-y-8">
+					<h2 class="font-mono text-sm tracking-widest text-blue-neon uppercase border-b border-blue-neon/30 pb-2">
+						System Stack
+					</h2>
+					<div class="grid grid-cols-2 gap-4 font-mono text-[10px] uppercase tracking-wider">
+						<div>
+							<p class="text-white/40 mb-1">Framework</p>
+							<p>{stack.framework}</p>
+						</div>
+						<div>
+							<p class="text-white/40 mb-1">UI</p>
+							<p>{stack.styling}</p>
+						</div>
+						<div>
+							<p class="text-white/40 mb-1">Core</p>
+							<p>{stack.content}</p>
+						</div>
+						<div>
+							<p class="text-white/40 mb-1">Edge</p>
+							<p>{stack.deployment}</p>
+						</div>
+					</div>
+					
+					<div class="pt-8">
+						<a href="#" class="inline-block bg-orange hover:bg-orange-hover text-black font-black px-8 py-3 tracking-tighter uppercase transition-colors">
+							Join the Glitch
+						</a>
+					</div>
+				</div>
+
+			</section>
+
+			<footer class="mt-24 text-center">
+				<p class="font-mono text-[10px] text-white/20 uppercase tracking-[0.5em]">
+					© 2026 Talgidi Codes / Created by GLitchMan
+				</p>
+			</footer>
+
+		</main>
+	</body>
+</html>
