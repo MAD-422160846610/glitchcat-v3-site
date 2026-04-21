@@ -2,6 +2,7 @@
 import AsciiBackground from '../components/AsciiBackground.astro';
 import AsciiCat from '../components/AsciiCat.astro';
 import { getManifest } from '../utils/manifest-parser';
+import '../styles/global.css';
 
 const manifest = getManifest();
 const { project, version, sprint, roadmap, stack } = manifest;

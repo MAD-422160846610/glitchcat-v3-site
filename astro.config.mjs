@@ -1,9 +1,11 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://MAD-422160846610.github.io',
   base: '/glitchcat-v3-site',
-  integrations: [tailwind()],
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });

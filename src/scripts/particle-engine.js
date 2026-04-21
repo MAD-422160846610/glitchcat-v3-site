@@ -7,9 +7,17 @@ export class Particle {
     this.baseX = x;
     this.baseY = y;
     this.char = char;
-    this.size = 10;
+    // Varying sizes: small, medium, large
+    this.size = Math.random() * 20 + 8; // Size between 8 and 28
     this.density = (Math.random() * 30) + 1;
-    this.color = '#0055FF';
+    
+    // Create depth with opacity based on size
+    const opacity = (this.size - 8) / 20 * 0.7 + 0.1; // opacity between 0.1 and 0.8
+    this.color = `rgba(0, 85, 255, ${opacity})`;
+
+    // Continuous motion variables
+    this.vx = (Math.random() - 0.5) * (this.size / 15);
+    this.vy = (Math.random() - 0.5) * (this.size / 15);
   }
 
   draw() {
@@ -19,17 +27,28 @@ export class Particle {
   }
 
   update(mouse) {
+    // Add continuous slow motion
+    this.baseX += this.vx;
+    this.baseY += this.vy;
+
+    // Wrap around screen
+    if (this.baseX < 0) this.baseX = this.canvas.width;
+    if (this.baseX > this.canvas.width) this.baseX = 0;
+    if (this.baseY < 0) this.baseY = this.canvas.height;
+    if (this.baseY > this.canvas.height) this.baseY = 0;
+
     let dx = mouse.x - this.x;
     let dy = mouse.y - this.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
-    let forceDirectionX = dx / distance;
-    let forceDirectionY = dy / distance;
-    let maxDistance = mouse.radius;
-    let force = (maxDistance - distance) / maxDistance;
-    let directionX = forceDirectionX * force * this.density;
-    let directionY = forceDirectionY * force * this.density;
-
-    if (distance < mouse.radius) {
+    
+    if (mouse.x != null && mouse.y != null && distance < mouse.radius) {
+      let forceDirectionX = dx / distance;
+      let forceDirectionY = dy / distance;
+      let maxDistance = mouse.radius;
+      let force = (maxDistance - distance) / maxDistance;
+      let directionX = forceDirectionX * force * this.density;
+      let directionY = forceDirectionY * force * this.density;
+      
       this.x -= directionX;
       this.y -= directionY;
     } else {
@@ -45,7 +64,7 @@ export class Particle {
   }
 }
 
-export function initParticles(canvas, textData) {
+export function initParticles(canvas) {
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -54,7 +73,7 @@ export function initParticles(canvas, textData) {
   const chars = '01X@#*+';
   
   // Fill screen with random ASCII grains
-  const numberOfParticles = (canvas.width * canvas.height) / 8000;
+  const numberOfParticles = (canvas.width * canvas.height) / 6000; // slightly denser
   for (let i = 0; i < numberOfParticles; i++) {
     let x = Math.random() * canvas.width;
     let y = Math.random() * canvas.height;
