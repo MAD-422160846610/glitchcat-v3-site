@@ -3,7 +3,7 @@
 @theme {
   --color-black: #000000;
   --color-orange: #FF4F18;
-  --color-orange-hover: #E54615;
+  --color-orange-hover: #ff6a3d;
   --color-blue-neon: #0055FF;
   --color-blue-glow: rgba(0, 85, 255, 0.5);
 
@@ -12,4 +12,56 @@
 
   --letter-spacing-tighter: -0.05em;
   --letter-spacing-widest: 0.25em;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Modal Markdown Content Styles */
+#modal-content h1 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#modal-content h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #ffffff;
+}
+
+#modal-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#modal-content ul {
+  list-style-type: square;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#modal-content li {
+  margin-bottom: 0.5rem;
+}
+
+#modal-content strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+#modal-content em {
+  font-style: italic;
+  color: #FF4F18;
 }
