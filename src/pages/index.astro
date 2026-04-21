@@ -6,6 +6,11 @@ import '../styles/global.css';
 
 const manifest = getManifest();
 const { project, version, sprint, roadmap, stack } = manifest;
+
+// Load blog posts
+const posts = await Astro.glob('../content/blog/*.md');
+// Sort posts by date or just keep them as they are
+posts.sort((a, b) => new Date(a.frontmatter.pubDate).valueOf() - new Date(b.frontmatter.pubDate).valueOf());
 ---
 
 <html lang="en">
@@ -43,7 +48,7 @@ const { project, version, sprint, roadmap, stack } = manifest;
 						Active Roadmap
 					</h2>
 					<ul class="space-y-4 font-mono text-sm">
-						{Object.values(roadmap)[0].map((task) => (
+						{Object.values(roadmap)[0].map((task: any) => (
 							<li class="flex items-start gap-4">
 								<span class={task.status === 'done' ? 'text-blue-neon' : task.status === 'in-progress' ? 'text-orange animate-pulse' : 'text-white/40'}>
 									[{task.status === 'done' ? 'X' : task.status === 'in-progress' ? '>' : ' '}]
@@ -146,38 +151,27 @@ const { project, version, sprint, roadmap, stack } = manifest;
 				</div>
 				
 				<div class="space-y-4">
-					<!-- Post 1 -->
-					<article class="border border-white/10 p-4 hover:border-blue-neon transition-colors group">
-						<div class="flex justify-between items-center mb-2">
-							<span class="font-mono text-[10px] text-blue-neon uppercase">2026-04-21 // TIER-1</span>
-							<span class="font-mono text-[10px] text-white/40 uppercase">AUTHOR: GLITCHMAN</span>
-						</div>
-						<h3 class="font-bold text-lg mb-2 group-hover:text-blue-neon transition-colors">Tier 1: El Cubículo Digital Omni-canal</h3>
-						<p class="text-sm text-white/60 mb-4">Cómo GlitchCat unifica tu conocimiento personal a través de Discord, WhatsApp y Telegram en un solo cerebro de Markdown.</p>
-						<a href="#" class="inline-block font-mono text-[10px] uppercase tracking-widest text-orange hover:text-white transition-colors">> Read_Module</a>
-					</article>
-
-					<!-- Post 2 -->
-					<article class="border border-white/10 p-4 hover:border-orange transition-colors group">
-						<div class="flex justify-between items-center mb-2">
-							<span class="font-mono text-[10px] text-orange uppercase">2026-04-22 // TIER-2</span>
-							<span class="font-mono text-[10px] text-white/40 uppercase">AUTHOR: GLITCHMAN</span>
-						</div>
-						<h3 class="font-bold text-lg mb-2 group-hover:text-orange transition-colors">Tier 2: Células SCRUM y la Oficina Digital</h3>
-						<p class="text-sm text-white/60 mb-4">Evolucionando de la productividad individual a la sincronización de equipos mediante grafos de conocimiento compartidos.</p>
-						<a href="#" class="inline-block font-mono text-[10px] uppercase tracking-widest text-orange hover:text-white transition-colors">> Read_Module</a>
-					</article>
-
-					<!-- Post 3 -->
-					<article class="border border-white/10 p-4 hover:border-white transition-colors group">
-						<div class="flex justify-between items-center mb-2">
-							<span class="font-mono text-[10px] text-white uppercase">2026-04-23 // TIER-3</span>
-							<span class="font-mono text-[10px] text-white/40 uppercase">AUTHOR: GLITCHMAN</span>
-						</div>
-						<h3 class="font-bold text-lg mb-2 group-hover:text-white transition-colors">Tier 3: Corporativo Virtual y el Anclaje Blockchain</h3>
-						<p class="text-sm text-white/60 mb-4">La visión definitiva de GlitchCat: Departamentos interconectados, consenso de súper-cerebro y almacenamiento descentralizado seguro.</p>
-						<a href="#" class="inline-block font-mono text-[10px] uppercase tracking-widest text-orange hover:text-white transition-colors">> Read_Module</a>
-					</article>
+					{posts.map((post, index) => {
+						const colors = ['blue-neon', 'orange', 'white'];
+						const color = colors[index % colors.length];
+						return (
+							<article class={`border border-white/10 p-4 hover:border-${color} transition-colors group cursor-pointer read-module-btn`} data-content-id={`post-content-${index}`}>
+								<div class="flex justify-between items-center mb-2">
+									<span class={`font-mono text-[10px] text-${color} uppercase`}>{post.frontmatter.pubDate.split('T')[0]} // TIER-{index + 1}</span>
+									<span class="font-mono text-[10px] text-white/40 uppercase">AUTHOR: {post.frontmatter.author}</span>
+								</div>
+								<h3 class={`font-bold text-lg mb-2 group-hover:text-${color} transition-colors`}>{post.frontmatter.title}</h3>
+								<p class="text-sm text-white/60 mb-4">{post.frontmatter.description}</p>
+								<div class="inline-block font-mono text-[10px] uppercase tracking-widest text-orange group-hover:text-white transition-colors">> Read_Module</div>
+								
+								<!-- Hidden Content -->
+								<div id={`post-content-${index}`} class="hidden">
+									<h2 class={`text-2xl font-black mb-6 text-${color}`}>{post.frontmatter.title}</h2>
+									<div class="prose prose-invert prose-p:text-white/80 prose-headings:text-white prose-li:text-white/80 max-w-none font-mono text-sm leading-relaxed" set:html={post.compiledContent()} />
+								</div>
+							</article>
+						)
+					})}
 				</div>
 			</section>
 
@@ -188,5 +182,86 @@ const { project, version, sprint, roadmap, stack } = manifest;
 			</footer>
 
 		</main>
+
+		<!-- TRANSMISSION MODAL -->
+		<div id="transmission-modal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-md items-center justify-center p-4 md:p-12 overflow-y-auto">
+			<div class="relative w-full max-w-4xl border border-blue-neon bg-black p-8 shadow-[0_0_30px_rgba(0,85,255,0.2)]">
+				<button id="close-modal" class="absolute top-4 right-4 font-mono text-orange hover:text-white uppercase tracking-widest text-xs">[X] Close_Connection</button>
+				<div class="font-mono text-xs tracking-widest text-blue-neon uppercase mb-6 border-b border-blue-neon/30 pb-2">
+					<span id="modal-status" class="animate-pulse">DECRYPTING...</span>
+				</div>
+				<div id="modal-content" class="min-h-[200px]">
+					<!-- Content injected here -->
+				</div>
+			</div>
+		</div>
+
+		<script>
+			const modal = document.getElementById('transmission-modal');
+			const modalContent = document.getElementById('modal-content');
+			const closeModal = document.getElementById('close-modal');
+			const modalStatus = document.getElementById('modal-status');
+			
+			const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+=-/\\|';
+
+			// Glitch text effect
+			async function typeTextWithGlitch(element, finalHtml) {
+				// Temporary element to extract text nodes
+				const temp = document.createElement('div');
+				temp.innerHTML = finalHtml;
+				
+				// We'll just fade it in with a glitch effect on the container for simplicity and robustness with HTML tags
+				element.innerHTML = finalHtml;
+				element.style.opacity = '0';
+				
+				let iteration = 0;
+				modalStatus.innerText = 'DECRYPTING...';
+				
+				const interval = setInterval(() => {
+					element.style.opacity = (iteration / 10).toString();
+					if (iteration % 2 === 0) {
+						element.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+					} else {
+						element.style.transform = 'translate(0, 0)';
+					}
+					
+					if (iteration >= 10) {
+						clearInterval(interval);
+						element.style.opacity = '1';
+						element.style.transform = 'translate(0, 0)';
+						modalStatus.innerText = 'SECURE_CONNECTION_ESTABLISHED';
+						modalStatus.classList.remove('text-blue-neon');
+						modalStatus.classList.add('text-white');
+					}
+					iteration++;
+				}, 50);
+			}
+
+			document.querySelectorAll('.read-module-btn').forEach(btn => {
+				btn.addEventListener('click', (e) => {
+					// Open modal
+					modal.classList.remove('hidden');
+					modal.classList.add('flex');
+					document.body.style.overflow = 'hidden'; // Prevent background scroll
+
+					// Get content
+					const contentId = btn.getAttribute('data-content-id');
+					const contentHtml = document.getElementById(contentId).innerHTML;
+					
+					// Run effect
+					typeTextWithGlitch(modalContent, contentHtml);
+				});
+			});
+
+			closeModal.addEventListener('click', () => {
+				modal.classList.add('hidden');
+				modal.classList.remove('flex');
+				document.body.style.overflow = '';
+				modalContent.innerHTML = '';
+				modalStatus.innerText = 'DECRYPTING...';
+				modalStatus.classList.add('text-blue-neon');
+				modalStatus.classList.remove('text-white');
+			});
+		</script>
 	</body>
 </html>
